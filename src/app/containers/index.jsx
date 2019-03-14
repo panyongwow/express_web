@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { Link, withRouter, BrowserRouter,Switch,Route } from 'react-router-dom'
-import Orders from '../containers/orders'
-import Courier from  '../containers/courier'
-import SubRouter from '../router/subRouter'
-//import './App.css';
-import { Layout, Menu } from 'antd'
+import { Link, BrowserRouter } from 'react-router-dom'
+import { Layout, Menu} from 'antd'
+import AppRouter from '../router/appRouter'
 
 export default class App extends Component {
     render() {
@@ -12,7 +9,6 @@ export default class App extends Component {
         return (
             <BrowserRouter>
                 <Layout className='layout'>
-
                     <Header>
                         <Menu
                             theme='dark'
@@ -20,15 +16,15 @@ export default class App extends Component {
                             defaultSelectedKeys={['1']}
                             style={{ lineHeight: '64px' }}
                         >
-                            <Menu.Item key='1'><Link to='/orders'>订单</Link></Menu.Item>
+                            <Menu.Item key='1'><Link to='/orders'>订 单</Link></Menu.Item>
                             <Menu.Item key='2'><Link to='/courier'>快递员</Link></Menu.Item>
-                            <Menu.Item key='3'>区域</Menu.Item>
-                            <Menu.Item key='4'>系统</Menu.Item>
+                            <Menu.Item key='3'>区 域</Menu.Item>
+                            <Menu.Item key='4'>系 统</Menu.Item>
                         </Menu>
                     </Header>
-                    <Link to='/courier'>快递员</Link>
-                    <Content style={{ padding: '0 50px' }}>
-                            <SubRouter />
+                    <div style={{height:'3px',backgroundColor:'#fff'}}></div>
+                    <Content style={{ padding: '0 50px',margin:'10px'}}>
+                        <AppRouter />
                     </Content>
 
                 </Layout>
@@ -36,4 +32,3 @@ export default class App extends Component {
         );
     }
 }
-//export default withRouter(App)

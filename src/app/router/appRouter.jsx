@@ -1,23 +1,16 @@
 import React, { Component } from 'react'
-import { Router, Route, HashRouter } from 'react-router-dom'
-import App from '../containers'
-import SubRouter from './subRouter'
-
-import createBrowserHistory from 'history/createBrowserHistory'
-const customeHistory=createBrowserHistory()
+import { Route, Switch } from 'react-router-dom'
+import Orders from '../containers/orders'
+import Courier from '../containers/courier'
 
 export default class AppRouter extends Component {
     render() {
         return (
-            <Router history={customeHistory}>
-                <App>
-                    {/* <Route path="/" component={SubRouter} /> */}
-                    <SubRouter />
-                </App>
-            </Router>
-            // <Router history={customeHistory} component={App} >
-            //     <SubRouter />
-            // </Router>
+            <Switch>
+                <Route path='/orders' component={Orders} />
+                <Route path='/courier' component={Courier} />
+                <Route exact path='/' component={Orders} />
+            </Switch>
         )
     }
 }
