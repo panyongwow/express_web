@@ -6,7 +6,7 @@ export default class Orders extends Component {
     render() {
         const TabPane = Tabs.TabPane
         const Option = Select.Option
-        const operations = <Button type='primary'>添加新订单</Button>;
+        // const operations = <Button type='primary'>添加新订单</Button>;
         return (
             <div>
                 <div style={{ marginTop: 5}}>
@@ -21,7 +21,7 @@ export default class Orders extends Component {
                 </div>
                 <Tabs>
                     <TabPane tab='新订单(20)' key='1'>
-                        <Pagination defaultCurrent={1} total={500} />
+                        <Pagination  size="small" defaultCurrent={1} total={500} style={{float:"right"}} />
                     </TabPane>
                     <TabPane tab='已派单(15)' key='2'></TabPane>
                     <TabPane tab='已接单(5)' key='3'></TabPane>
