@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
 import {Tabs,Button} from 'antd'
 
-import Service from './subpages/service'
+import Service from './service'
 
 export default class Sys extends Component{
     constructor(props){

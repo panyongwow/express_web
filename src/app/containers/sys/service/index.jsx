@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Button, Table, Divider, Modal, Form, Input } from 'antd'
+
 import './style.css'
+import InputForm from './inputForm'
 
 //上游平台服务商管理
 export default class Service extends Component {
@@ -11,6 +13,8 @@ export default class Service extends Component {
             selectedRowKeys: [],
             showModal: false,
             confirmLoading: false,
+            openModalType: 'add',           //打开窗口类型，"add"添加新数据，"edit"修改数据
+            editData:null
         }
     }
 
@@ -25,13 +29,26 @@ export default class Service extends Component {
     }
     openModal = () => {
         this.setState({
-            showModal: true
+            showModal: true,
+            openModalType: 'add',
+            editData:null
         })
     }
     closeModal = () => {
         this.setState({
-            showModal: false
+            showModal: false,
+            //editData:null
         })
+    }
+    openEditModal = (data) => {
+        this.setState({
+            showModal: true,
+            openModalType: 'edit',
+            editData:data
+        })
+    }
+    handleSubmitData = (data) => {
+        alert(JSON.stringify(data))
     }
     render() {
         const columns = [
@@ -41,11 +58,9 @@ export default class Service extends Component {
                 title: '操作', key: 'action', width: '10%', align: 'center',
                 render: (text, record) => (
                     <span>
-                        {/* <a href="javascript:;">修改</a> */}
-                        <Button size='small' type='primary' onClick={() => alert(JSON.stringify(record))}>修改</Button>
-                        <Divider type='vertical'></Divider>
-                        <Button size='small'>删除</Button>
-                        {/* <a href="javascript:;">删除</a> */}
+                        <Button size='small' type='primary' onClick={() => this.openEditModal(record)}>修改</Button>
+                        {/* <Divider type='vertical'></Divider> */}
+                        <Button size='small' style={{ marginLeft: '5px' }}>删除</Button>
                     </span>
                 )
             }
@@ -57,16 +72,7 @@ export default class Service extends Component {
                 })
             }
         }
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 12 },
-                sm: { span: 4 },
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 20 },
-            },
-        };
+
         const { dataSource, showModal, confirmLoading } = this.state
         return (
             <div>
@@ -82,28 +88,16 @@ export default class Service extends Component {
                     style={{ backgroundColor: '#fff' }}
                 />
                 <Modal
-                    title='添加'
+                    title={this.state.openModalType === 'add' ? '添加' : '修改'}
                     visible={showModal}
                     confirmLoading={confirmLoading}
                     onCancel={this.closeModal}
                     footer={null}
                 >
-                    <Form {...formItemLayout}>
-                        <Form.Item label="平台名称" layout='inline'>
-                            <Input placeholder="请输入上游平台名称" />
-                        </Form.Item>
-                        <Form.Item label="备注" layout='inline'>
-                            <Input.TextArea rows={4} placeholder="请输入备注信息" />
-                        </Form.Item>
-                        <Form.Item
-                            wrapperCol={{
-                                xs: { span: 14, offset: 10 },
-                                sm: { span: 13, offset: 11},
-                            }}
-                        >
-                            <Button type="primary" htmlType="submit" >确 定</Button>
-                        </Form.Item>
-                    </Form>
+                    <InputForm
+                        onSubmitData={this.handleSubmitData}
+                        editData={this.state.editData}
+                    />
                 </Modal>
             </div>
         )
