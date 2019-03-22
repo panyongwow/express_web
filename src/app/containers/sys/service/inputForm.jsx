@@ -13,11 +13,11 @@ class InputForm extends Component {
             editData: this.props.editData
         })
     }
-    componentWillReceiveProps(nextProps){
-        if(this.props.editData !==nextProps.editData){
+    componentWillReceiveProps(nextProps) {
+        if (this.props.editData !== nextProps.editData) {
             this.setState({
                 editData: nextProps.editData
-            })            
+            })
         }
     }
     handleSubmit = (e) => {
@@ -63,7 +63,9 @@ class InputForm extends Component {
                 </Form.Item>
                 <Form.Item label="备注" layout='inline'>
                     {
-                        getFieldDecorator('remark')(
+                        getFieldDecorator('remark',
+                            { initialValue: this.state.editData ? this.state.editData.remark : '' }
+                        )(
                             <Input.TextArea rows={4} placeholder="备注信息" />
                         )
                     }

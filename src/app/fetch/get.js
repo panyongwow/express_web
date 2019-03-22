@@ -1,11 +1,12 @@
-import 'es6-promise'
+// import 'es6-promise'
 import 'whatwg-fetch'
-import APIURL from '../config/config'
+import {APIURL} from '../config/config'
 
 export default function get(url){
     return new Promise((resolve,reject)=>{
         fetch(APIURL+ url,{
-            credentials:'include',
+            //credentials:'include',
+            mode:'cors',
             headers:{
                 'Accept':'application/json,text/plain,*/*'
             }

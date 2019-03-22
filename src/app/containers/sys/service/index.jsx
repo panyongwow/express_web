@@ -3,6 +3,7 @@ import { Button, Table, Divider, Modal, Form, Input } from 'antd'
 
 import './style.css'
 import InputForm from './inputForm'
+import serviceDao from '../../../dao/service'
 
 //上游平台服务商管理
 export default class Service extends Component {
@@ -14,24 +15,39 @@ export default class Service extends Component {
             showModal: false,
             confirmLoading: false,
             openModalType: 'add',           //打开窗口类型，"add"添加新数据，"edit"修改数据
-            editData:null
+            editData: null
+        }
+        this.search = {                      //搜索条件
+            nowpage: 1,
+            apagenum: 9999,
+            name: ''
         }
     }
 
     componentDidMount() {
-        const dataSource = [
-            { key: '1', name: '叮咚买菜', remark: '' },
-            { key: '2', name: '天天果园', remark: '' }
-        ]
-        this.setState({
-            dataSource
-        })
+        // const dataSource = [
+        //     { key: '1', name: '叮咚买菜', remark: '' },
+        //     { key: '2', name: '天天果园', remark: '' }
+        // ]
+        // this.setState({
+        //     dataSource
+        // })
+        this.list(this.search)
+    }
+    list(s) {
+        serviceDao.list(s)
+            .then(res => {
+                console.log(res)
+                this.setState({
+                    dataSource: res.details
+                })
+            })
     }
     openModal = () => {
         this.setState({
             showModal: true,
             openModalType: 'add',
-            editData:null
+            editData: null
         })
     }
     closeModal = () => {
@@ -41,14 +57,40 @@ export default class Service extends Component {
         })
     }
     openEditModal = (data) => {
+        alert(JSON.stringify(data))
         this.setState({
             showModal: true,
             openModalType: 'edit',
-            editData:data
+            editData: data
         })
     }
     handleSubmitData = (data) => {
-        alert(JSON.stringify(data))
+        if (this.state.openModalType === 'add') {        //添加
+            this.add(data)
+        }
+        else {                   //修改
+
+        }
+    }
+    add(data) {
+        serviceDao.add(data)
+            .then(result => {
+                if (result.status === 'OK') {
+                    let newDataSource = this.state.dataSource;
+                    newDataSource.push({ ...data, id: result.id })
+                    this.setState({
+                        dataSource: newDataSource,
+                        showModal: false
+                    })
+                }
+                else {
+                    Modal.error({
+                        title: '提交失败',
+                        content: result.errordetail
+                    })
+                }
+            })
+            .catch(e => alert(e))
     }
     render() {
         const columns = [
