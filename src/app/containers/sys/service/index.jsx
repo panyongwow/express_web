@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Button, Table, Divider, Modal, Form, Input } from 'antd'
+import { Button, Table, Modal } from 'antd'
 
 import './style.css'
-import InputForm from './inputForm'
+import InputModal from './inputModal'
 import serviceDao from '../../../dao/service'
 
 //上游平台服务商管理
@@ -25,23 +25,58 @@ export default class Service extends Component {
     }
 
     componentDidMount() {
-        // const dataSource = [
-        //     { key: '1', name: '叮咚买菜', remark: '' },
-        //     { key: '2', name: '天天果园', remark: '' }
-        // ]
-        // this.setState({
-        //     dataSource
-        // })
         this.list(this.search)
     }
     list(s) {
         serviceDao.list(s)
-            .then(res => {
-                console.log(res)
+            .then(result => {
                 this.setState({
-                    dataSource: res.details
+                    dataSource: result.details
                 })
             })
+    }
+    del(id) {
+        if (id.length === 0) {
+            Modal.info({
+                title: '提示',
+                content: '请选择要删除的记录!',
+                okText: '确定',
+            })
+        }
+        else {
+            let that=this
+            Modal.confirm({
+                title: '删除',
+                content: '确认要删除所选记录吗？',
+                okText: '确认',
+                cancelText: '取消',
+                onOk() {
+                    serviceDao.del(id)
+                        .then(result => {
+                            if (result.status === 'OK') {
+                                let newData=[]
+                                let idArray=[...id]
+                                let dataSource= that.state.dataSource
+                                dataSource.map((item,index)=>{
+                                    if(!idArray.find((delID)=>delID===item.id)){
+                                        newData.push(item) 
+                                    }
+                                })
+                                that.setState({
+                                    dataSource:newData
+                                })
+                            }
+                            else {
+                                Modal.error({
+                                    title: '删除失败',
+                                    content: result.errordetail
+                                })
+                            }
+                        })
+                }
+            })
+        }
+
     }
     openModal = () => {
         this.setState({
@@ -50,47 +85,29 @@ export default class Service extends Component {
             editData: null
         })
     }
-    closeModal = () => {
-        this.setState({
-            showModal: false,
-            //editData:null
-        })
-    }
     openEditModal = (data) => {
-        alert(JSON.stringify(data))
         this.setState({
             showModal: true,
             openModalType: 'edit',
             editData: data
         })
     }
-    handleSubmitData = (data) => {
-        if (this.state.openModalType === 'add') {        //添加
-            this.add(data)
-        }
-        else {                   //修改
-
-        }
+    handleAddedData = (data) => {
+        let newDataSource = this.state.dataSource;
+        newDataSource.push(data)
+        this.setState({
+            dataSource: newDataSource,
+            showModal: false
+        })
     }
-    add(data) {
-        serviceDao.add(data)
-            .then(result => {
-                if (result.status === 'OK') {
-                    let newDataSource = this.state.dataSource;
-                    newDataSource.push({ ...data, id: result.id })
-                    this.setState({
-                        dataSource: newDataSource,
-                        showModal: false
-                    })
-                }
-                else {
-                    Modal.error({
-                        title: '提交失败',
-                        content: result.errordetail
-                    })
-                }
-            })
-            .catch(e => alert(e))
+    handleModifiedData = (data) => {
+        let dataSource = this.state.dataSource;
+        let serviceData = dataSource.find((item) => item.id === data.id)
+        serviceData.name = data.name
+        serviceData.remark = data.remark
+        this.setState({
+            dataSource: dataSource
+        })
     }
     render() {
         const columns = [
@@ -102,7 +119,7 @@ export default class Service extends Component {
                     <span>
                         <Button size='small' type='primary' onClick={() => this.openEditModal(record)}>修改</Button>
                         {/* <Divider type='vertical'></Divider> */}
-                        <Button size='small' style={{ marginLeft: '5px' }}>删除</Button>
+                        <Button size='small' style={{ marginLeft: '5px' }} onClick={() => this.del(record.id)}>删除</Button>
                     </span>
                 )
             }
@@ -114,14 +131,13 @@ export default class Service extends Component {
                 })
             }
         }
-
-        const { dataSource, showModal, confirmLoading } = this.state
         return (
             <div>
                 <Button className='btn' type='primary' onClick={this.openModal}>添加</Button>
-                <Button className='btn' onClick={() => alert(JSON.stringify(this.state.selectedRowKeys))} >删除</Button>
+                <Button className='btn' onClick={() => this.del(this.state.selectedRowKeys)} >删除</Button>
                 <Table
-                    dataSource={dataSource}
+                    rowKey="id"
+                    dataSource={this.state.dataSource}
                     columns={columns}
                     rowSelection={rowSelection}
                     bordered
@@ -129,18 +145,14 @@ export default class Service extends Component {
                     size="small"
                     style={{ backgroundColor: '#fff' }}
                 />
-                <Modal
-                    title={this.state.openModalType === 'add' ? '添加' : '修改'}
-                    visible={showModal}
-                    confirmLoading={confirmLoading}
-                    onCancel={this.closeModal}
-                    footer={null}
-                >
-                    <InputForm
-                        onSubmitData={this.handleSubmitData}
-                        editData={this.state.editData}
-                    />
-                </Modal>
+                <InputModal
+                    //ref={this.inputFormRef}
+                    type={this.state.openModalType}
+                    initData={this.state.editData}
+                    visible={this.state.showModal}
+                    onAddedData={this.handleAddedData}
+                    onModifiedData={this.handleModifiedData}
+                />
             </div>
         )
     }

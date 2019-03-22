@@ -15,7 +15,6 @@ export default function post(url,data){
         })
         .then(res=>res.json())
         .then(result=>{
-            console.log(result)
             resolve(result)
         })
         .catch(error=>reject(error))

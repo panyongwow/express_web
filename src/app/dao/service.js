@@ -16,4 +16,13 @@ export default class Service {
         //     'name=' + name + '&remark=' + remark)
         return Post(url,data)
     }
+
+    static modify(data){
+        let url='/service/modify.ashx'
+        return Post(url,data)
+    }
+    static del(id){
+        let url='/service/del.ashx'
+        return Post(url,{id})
+    }
 }
