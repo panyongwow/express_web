@@ -13,7 +13,7 @@ export default class Service extends Component {
             dataSource: [],
             selectedRowKeys: [],
             showModal: false,
-            confirmLoading: false,
+            // confirmLoading: false,
             openModalType: 'add',           //打开窗口类型，"add"添加新数据，"edit"修改数据
             editData: null
         }
@@ -102,7 +102,7 @@ export default class Service extends Component {
         newDataSource.push(data)
         this.setState({
             dataSource: newDataSource,
-            showModal: false
+            //showModal: false
         })
     }
     handleModifiedData = (data) => {
