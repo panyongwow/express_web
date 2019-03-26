@@ -18,7 +18,7 @@ export default class App extends Component {
                         >
                             <Menu.Item key='1'><Link to='/orders'>订 单</Link></Menu.Item>
                             <Menu.Item key='2'><Link to='/courier'>快递员</Link></Menu.Item>
-                            <Menu.Item key='3'>区 域</Menu.Item>
+                            <Menu.Item key='3'><Link to='/area'></Link> 区 域</Menu.Item>
                             <Menu.Item key='4'><Link to='sys'>系 统</Link></Menu.Item>
                         </Menu>
                     </Header>

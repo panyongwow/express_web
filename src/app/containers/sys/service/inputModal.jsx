@@ -21,11 +21,18 @@ class InputModal extends Component {
         this.setState({
             visible:false
         })
+
+    }
+    handlerAfterClosed=()=>{
+        this.props.onClosed()
     }
     handleSubmitData=(e)=>{
         e.preventDefault()
         this.props.form.validateFields((err,data)=>{
             if(err) return
+            this.setState({
+                confirmLoading:true
+            })
             if(this.props.type==='add'){
                 this.add(data)
             }
@@ -39,6 +46,9 @@ class InputModal extends Component {
     add(data) {
         serviceDao.add(data)
             .then(result => {
+                this.setState({
+                    confirmLoading:false
+                })
                 if (result.status === 'OK') {
                     this.props.onAddedData({...data,id:result.id})
                     this.props.form.resetFields()
@@ -53,12 +63,20 @@ class InputModal extends Component {
                     })
                 }
             })
-            .catch(e => alert(e))
+            .catch(e => {
+                alert(e)
+                this.setState({
+                    confirmLoading:false
+                })
+            })
     }
     modify(data){
         let modifyData={...data,id:this.props.initData.id}
         serviceDao.modify(modifyData)
             .then(result=>{
+                this.setState({
+                    confirmLoading:false
+                })                
                 if(result.status==='OK'){
                     //console.log(modifyData)
                     this.props.onModifiedData(modifyData)
@@ -98,6 +116,8 @@ class InputModal extends Component {
                 cancelText="取消"
                 onCancel={this.onCancel}
                 onOk={this.handleSubmitData}
+                confirmLoading={this.state.confirmLoading}
+                afterClose={this.handlerAfterClosed}
             >
                 <Form {...formItemLayout}>
                     <FormItem label="平台名称">

@@ -92,6 +92,11 @@ export default class Service extends Component {
             editData: data
         })
     }
+    closeModal=()=>{
+        this.setState({
+            showModal:false
+        })
+    }
     handleAddedData = (data) => {
         let newDataSource = this.state.dataSource;
         newDataSource.push(data)
@@ -118,7 +123,6 @@ export default class Service extends Component {
                 render: (text, record) => (
                     <span>
                         <Button size='small' type='primary' onClick={() => this.openEditModal(record)}>修改</Button>
-                        {/* <Divider type='vertical'></Divider> */}
                         <Button size='small' style={{ marginLeft: '5px' }} onClick={() => this.del(record.id)}>删除</Button>
                     </span>
                 )
@@ -146,12 +150,13 @@ export default class Service extends Component {
                     style={{ backgroundColor: '#fff' }}
                 />
                 <InputModal
-                    //ref={this.inputFormRef}
+                    ref={this.inputFormRef}
                     type={this.state.openModalType}
                     initData={this.state.editData}
                     visible={this.state.showModal}
                     onAddedData={this.handleAddedData}
                     onModifiedData={this.handleModifiedData}
+                    onClosed={this.closeModal}
                 />
             </div>
         )
