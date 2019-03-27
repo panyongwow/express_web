@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, BrowserRouter } from 'react-router-dom'
+import { Link, BrowserRouter} from 'react-router-dom'
 import { Layout, Menu} from 'antd'
 import AppRouter from '../router/appRouter'
 
@@ -29,7 +29,7 @@ export default class App extends Component {
                         >
                             <Menu.Item key='1' onClick={this.menuItemClicked}><Link to='/orders'>订 单</Link></Menu.Item>
                             <Menu.Item key='2' onClick={this.menuItemClicked}><Link to='/courier'>快递员</Link></Menu.Item>
-                            <Menu.Item key='3' onClick={this.menuItemClicked}><Link to='/area'></Link> 区 域</Menu.Item>
+                            <Menu.Item key='3' onClick={this.menuItemClicked}><Link to='/area'>区 域</Link></Menu.Item>
                             <Menu.Item key='4' onClick={this.menuItemClicked}><Link to='sys'>系 统</Link></Menu.Item>
                         </Menu>
                     </Header>

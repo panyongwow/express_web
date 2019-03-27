@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, Form, Input, Button, Icon } from 'antd'
 import './style.css'
+import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from 'constants';
 
 class InputModal extends Component {
     constructor(props) {
@@ -9,19 +10,22 @@ class InputModal extends Component {
             visible: false,
             mapVisible: false
         }
+        this.map = null
+        this.zoom = []
+
     }
     componentDidMount() {
-        setTimeout(() => {
-            const { BMap } = window
-            var map = new BMap.Map("mapContainer"); // 创建Map实例 
-            map.centerAndZoom(new BMap.Point(121.4789, 31.236), 16); // 初始化地图,设置中心点坐标和地图级别 
-            map.addControl(new BMap.MapTypeControl()); //添加地图类型控件 
-            map.setCurrentCity("上海"); // 设置地图显示的城市 此项是必须设置的 
-            map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放 
-            map.addEventListener("click",(e)=>{
-                alert(e.point.lng+","+e.point.lat)
-            })               
-        }, 2000);
+        // setTimeout(() => {
+        //     const { BMap } = window
+        //     var map = new BMap.Map("mapContainer"); // 创建Map实例 
+        //     map.centerAndZoom(new BMap.Point(121.4789, 31.236), 16); // 初始化地图,设置中心点坐标和地图级别 
+        //     map.addControl(new BMap.MapTypeControl()); //添加地图类型控件 
+        //     map.setCurrentCity("上海"); // 设置地图显示的城市 此项是必须设置的 
+        //     map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放 
+        //     map.addEventListener("click",(e)=>{
+        //         alert(e.point.lng+","+e.point.lat)
+        //     })               
+        // }, 1000);
     }
     componentWillReceiveProps(nextProps) {
         if (this.state.visible !== nextProps.visible) {
@@ -35,14 +39,48 @@ class InputModal extends Component {
             this.setState({
                 mapVisible: true
             })
-              
+            const { BMap } = window
+            if (!this.map) {
+                this.map = new BMap.Map("mapContainer"); // 创建Map实例 
+                this.map.centerAndZoom(new BMap.Point(121.4789, 31.236), 16); // 初始化地图,设置中心点坐标和地图级别 
+                this.map.addControl(new BMap.MapTypeControl()); //添加地图类型控件 
+                this.map.setCurrentCity("上海"); // 设置地图显示的城市 此项是必须设置的 
+                this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+
+
+                this.map.addEventListener("click", (e) => {
+                    alert(e.point.lng + "," + e.point.lat)
+                    this.map.addOverlay(new BMap.Marker(e.point))
+                    this.zoom.push(e.point)
+                    this.drawPolygon()
+
+                })
+            }
+
         }
         else {
             this.setState({
                 mapVisible: false
             })
         }
+    }
+    drawPolygon() {
+        this.clearPolygon()
+        const { BMap } = window
+        let polygon = new BMap.Polygon(this.zoom)
+        this.map.addOverlay(polygon)
+        polygon.enableEditing()
+    }
+    clearPolygon() {
 
+        let allOverlay = this.map.getOverlays()
+        console.log(allOverlay)
+        if (allOverlay) {
+            for (let i = 0; i < allOverlay.length; i++) {
+                this.map.removeOverlay(allOverlay[i])
+            }
+
+        }
     }
     onCancel = () => {
         this.setState({
@@ -77,7 +115,7 @@ class InputModal extends Component {
                 // confirmLoading={this.state.confirmLoading}
                 afterClose={this.handlerAfterClosed}
                 width={this.state.mapVisible ? 1000 : 520}
-                style={{top:this.state.mapVisible?20:50}}
+                style={{ top: this.state.mapVisible ? 20 : 50 }}
             >
                 <Form {...formItemLayout}>
                     <FormItem label="区域名称">
@@ -91,11 +129,11 @@ class InputModal extends Component {
                         )}
                     </FormItem>
                     <FormItem label="区域范围" style={{ textAlign: 'left' }}>
-                        <Button type='primary' onClick={this.openMap}>设置区域范围<Icon type={this.state.mapVisible?'up':'down'} /></Button>
+                        <Button type='primary' onClick={this.openMap}>设置区域范围<Icon type={this.state.mapVisible ? 'up' : 'down'} /></Button>
                     </FormItem>
                     <FormItem style={{ display: this.state.mapVisible ? 'block' : 'none' }}>
                         <Button type='primary' onClick={this.openMap}>添加节点</Button>
-                        <div className='mapContainer' id='mapContainer'></div>
+                        <div className='mapContainer' id='mapContainer' style={{ border: '1px solid red' }}></div>
                     </FormItem>
                     <FormItem label="备注">
                         {getFieldDecorator('remark',

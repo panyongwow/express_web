@@ -1,5 +1,8 @@
+import 'react-app-polyfill/ie9'     //处理IE9的兼容性
+import 'react-app-polyfill/ie11'    //处理IE11的兼容性
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import './index.css';
 import App from '../src/app/containers'
 import * as serviceWorker from './serviceWorker';
